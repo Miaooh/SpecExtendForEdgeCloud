@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package specextend;
+
+// Message sent from Edge to Cloud: the draft token tree for verification
+message DraftRequest {
+  // Flattened draft token IDs from the generated tree (may include prefix on first request)
+  repeated int32 draft_token_ids = 1;
+  // Position IDs corresponding to each draft token
+  repeated int32 position_ids = 2;
+  // Serialized tree attention mask (flattened int8 array)
+  bytes tree_attention_mask = 3;
+  // Shape of the tree attention mask: [tree_len, total_seq_len]
+  int32 tree_mask_rows = 4;
+  int32 tree_mask_cols = 5;
+  // Current sequence length on the target side (for KV cache alignment)
+  int32 current_seq_len = 6;
+  // Whether the cloud should return attention scores for retrieval
+  bool request_retrieval = 7;
+  // Current timestep (for retrieval periodicity check)
+  int32 timestep = 8;
+  // Parent indices for each node in the draft tree (flattened)
+  repeated int32 parent_last = 9;
+  // Prefix token IDs (sent only on first request to trigger cloud prefill)
+  repeated int32 prefix_token_ids = 10;
+}
+
+// Message sent from Cloud to Edge: verification result + retrieval signal
+message VerifyResult {
+  // Accepted token IDs (the winning branch + resampled token)
+  repeated int32 accepted_token_ids = 1;
+  // Number of accepted tokens (excluding resampled)
+  int32 accept_length = 2;
+  // The resampled next token (first newly generated token from target)
+  int32 next_token = 3;
+  // Selected chunk indices for cross-model retrieval (empty if no retrieval)
+  repeated int32 retrieval_chunk_indices = 4;
+  // Total evicted tokens count (informational)
+  int32 evicted = 5;
+  // Whether generation should stop (EOS hit or max tokens reached)
+  bool need_stop = 6;
+  // The parent indices of the accepted branch in the original draft tree
+  repeated int32 accepted_parent_ids = 7;
+}
+
+// Edge-Cloud Speculative Decoding Service
+service SpecExtendService {
+  // Bidirectional streaming: Edge sends draft trees, Cloud returns verify results
+  rpc SpeculateDraft (stream DraftRequest) returns (stream VerifyResult);
+}

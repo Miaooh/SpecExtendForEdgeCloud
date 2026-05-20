@@ -1,0 +1,36 @@
+[project]
+name = "specextend-edge-cloud"
+version = "0.1.0"
+description = "SpecExtend Edge-Cloud Deployment: Draft model on edge, target model on cloud"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch==2.4.0",
+    "transformers==4.41.0",
+    "accelerate==0.21.0",
+    "sentencepiece>=0.1.99",
+    "protobuf>=3.19.0",
+    "termcolor==3.1.0",
+    "grpcio>=1.48.2",
+    "grpcio-tools>=1.48.2",
+    "tokenizers==0.19.1",
+    "tqdm>=4.67.0",
+    "packaging",
+    "ninja",
+]
+
+[project.optional-dependencies]
+flash = ["flash-attn==2.6.3"]
+
+[tool.uv]
+extra-index-url = [
+    "https://download.pytorch.org/whl/cu121",
+]
+index-strategy = "unsafe-best-match"
+
+[tool.uv.extra-build-dependencies]
+flash-attn = ["packaging", "ninja", "wheel", "setuptools", "torch"]
+
+[project.scripts]
+edge-server = "edge_server.main:main"
+cloud-server = "cloud_server.main:main"
