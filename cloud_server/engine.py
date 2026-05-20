@@ -104,7 +104,7 @@ class CloudVerifyEngine:
 
     def prefill(self, input_ids: torch.LongTensor):
         """Run target model prefill and return the first token + hidden states."""
-        outputs = self.target_model(
+        outputs = self.target_model.model(
             input_ids=input_ids,
             past_key_values=self.past_key_values,
             use_cache=True,

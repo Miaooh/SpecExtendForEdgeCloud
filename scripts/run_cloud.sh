@@ -1,7 +1,7 @@
 #!/bin/bash
 # Cloud server startup script
 
-TARGET_MODEL_PATH="${TARGET_MODEL_PATH:-/path/to/vicuna-7b-v1.5-16k}"
+TARGET_MODEL_PATH="${TARGET_MODEL_PATH:-/home/xzh/models/vicuna-7b-v1.5-16k}"
 PORT="${PORT:-50051}"
 DEVICE="${DEVICE:-cuda}"
 
