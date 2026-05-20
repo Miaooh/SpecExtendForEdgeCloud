@@ -126,6 +126,13 @@ class SpecExtendServicer(draft_pb2_grpc.SpecExtendServiceServicer):
                     )
                     cloud_input_ids = torch.cat([cloud_input_ids, pad], dim=-1)
 
+            # === DEBUG: print tensor shapes before tree_decoding ===
+            print(f"[Cloud Debug] draft_token_ids shape: {draft_token_ids.shape}")
+            print(f"[Cloud Debug] position_ids shape: {position_ids.shape}")
+            print(f"[Cloud Debug] tree_attention_mask shape: {tree_attention_mask.shape}")
+            print(f"[Cloud Debug] parent_last shape: {parent_last.shape}")
+            # =======================================================
+
             # Tree decoding
             tree_logits, hidden_states, outputs = self.engine.tree_decoding(
                 draft_input_ids=draft_token_ids,

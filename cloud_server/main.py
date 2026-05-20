@@ -11,6 +11,7 @@ import sys
 import torch
 from concurrent import futures
 from pathlib import Path
+from transformers import BitsAndBytesConfig
 
 # Ensure project root is on path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -35,6 +36,7 @@ def serve(
     target_model = KVLlamaForCausalLM.from_pretrained(
         target_model_path,
         torch_dtype=torch.float16,
+        quantization_config=BitsAndBytesConfig(load_in_8bit=True),
         low_cpu_mem_usage=True,
         device_map="auto" if str(device) == "cuda" else None,
     ).eval()
